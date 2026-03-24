@@ -1,79 +1,86 @@
 import { defineConfig, devices } from '@playwright/test';
+import * as dotenv from 'dotenv';
+
+dotenv.config();
 
 /**
- * Read environment variables from file.
- * https://github.com/motdotla/dotenv
- */
-// import dotenv from 'dotenv';
-// import path from 'path';
-// dotenv.config({ path: path.resolve(__dirname, '.env') });
-
-/**
- * See https://playwright.dev/docs/test-configuration.
+ * Playwright configuration for onskeskyen.dk test suite.
+ * - Parallel execution across multiple workers
+ * - Screenshot comparison support
+ * - Authenticated state reuse via storageState
  */
 export default defineConfig({
   testDir: './tests',
-  /* Run tests in files in parallel */
+
+  /* Run tests in parallel */
   fullyParallel: true,
-  /* Fail the build on CI if you accidentally left test.only in the source code. */
+  workers: process.env.CI ? 2 : 4,
+
+  /* Fail the build on CI if you accidentally left test.only in the source code */
   forbidOnly: !!process.env.CI,
+
   /* Retry on CI only */
   retries: process.env.CI ? 2 : 0,
-  /* Opt out of parallel tests on CI. */
-  workers: process.env.CI ? 1 : undefined,
-  /* Reporter to use. See https://playwright.dev/docs/test-reporters */
-  reporter: 'html',
-  /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
-  use: {
-    /* Base URL to use in actions like `await page.goto('')`. */
-    // baseURL: 'http://localhost:3000',
 
-    /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
+  /* Reporter */
+  reporter: [
+    ['html', { outputFolder: 'playwright-report', open: 'never' }],
+    ['list'],
+  ],
+
+  /* Shared settings for all projects */
+  use: {
+    baseURL: 'https://onskeskyen.dk',
     trace: 'on-first-retry',
+    screenshot: 'only-on-failure',
+    video: 'retain-on-failure',
+
+    /* Snapshot / visual comparison settings */
+    toHaveScreenshot: {
+      maxDiffPixelRatio: 0.05, // allow 5% pixel diff
+      animations: 'disabled',
+    },
   },
 
-  /* Configure projects for major browsers */
+  /* Visual snapshot directory */
+  snapshotDir: './screenshots',
+  snapshotPathTemplate: '{snapshotDir}/{testFilePath}/{arg}{ext}',
+
   projects: [
+    // ── Auth setup (runs once, not in parallel) ──────────────────────────────
     {
-      name: 'chromium',
+      name: 'auth-setup',
+      testMatch: '**/auth.setup.ts',
       use: { ...devices['Desktop Chrome'] },
     },
 
+    // ── Authenticated desktop tests ──────────────────────────────────────────
     {
-      name: 'firefox',
-      use: { ...devices['Desktop Firefox'] },
+      name: 'chromium-auth',
+      use: {
+        ...devices['Desktop Chrome'],
+        storageState: '.auth/user.json',
+      },
+      dependencies: ['auth-setup'],
+      testIgnore: ['**/auth.setup.ts', '**/unauthenticated.spec.ts'],
     },
 
+    // ── Unauthenticated / public tests ───────────────────────────────────────
     {
-      name: 'webkit',
-      use: { ...devices['Desktop Safari'] },
+      name: 'chromium-public',
+      use: { ...devices['Desktop Chrome'] },
+      testMatch: ['**/unauthenticated.spec.ts'],
     },
 
-    /* Test against mobile viewports. */
-    // {
-    //   name: 'Mobile Chrome',
-    //   use: { ...devices['Pixel 5'] },
-    // },
-    // {
-    //   name: 'Mobile Safari',
-    //   use: { ...devices['iPhone 12'] },
-    // },
-
-    /* Test against branded browsers. */
-    // {
-    //   name: 'Microsoft Edge',
-    //   use: { ...devices['Desktop Edge'], channel: 'msedge' },
-    // },
-    // {
-    //   name: 'Google Chrome',
-    //   use: { ...devices['Desktop Chrome'], channel: 'chrome' },
-    // },
+    // ── Mobile smoke test ────────────────────────────────────────────────────
+    {
+      name: 'mobile-chrome',
+      use: {
+        ...devices['Pixel 7'],
+        storageState: '.auth/user.json',
+      },
+      dependencies: ['auth-setup'],
+      testIgnore: ['**/auth.setup.ts', '**/unauthenticated.spec.ts'],
+    },
   ],
-
-  /* Run your local dev server before starting the tests */
-  // webServer: {
-  //   command: 'npm run start',
-  //   url: 'http://localhost:3000',
-  //   reuseExistingServer: !process.env.CI,
-  // },
 });
