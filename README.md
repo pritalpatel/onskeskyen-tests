@@ -1,5 +1,4 @@
 # Ønskeskyen — Playwright E2E Test Suite
----
 
 ## Test Covered
 - Login
