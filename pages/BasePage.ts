@@ -11,8 +11,6 @@ export class BasePage {
     this.page = page;
   }
 
-  // ── Navigation ─────────────────────────────────────────────────────────────
-
   async goto(path = '/') {
     await this.page.goto(path);
     await this.waitForPageLoad();
@@ -21,8 +19,6 @@ export class BasePage {
   async waitForPageLoad() {
     await this.page.waitForLoadState('networkidle');
   }
-
-  // ── Visual snapshot helpers ────────────────────────────────────────────────
 
   /**
    * Assert the full page visually matches the stored baseline.
@@ -36,16 +32,11 @@ export class BasePage {
     });
   }
 
-  /**
-   * Assert a specific element visually matches its stored baseline.
-   */
   async assertElementSnapshot(locator: Locator, name: string) {
     await expect(locator).toHaveScreenshot(`${name}.png`, {
       animations: 'disabled',
     });
   }
-
-  // ── Common UI helpers ──────────────────────────────────────────────────────
 
   async dismissCookieBanner() {
     const acceptBtn = this.page.getByRole('button', { name: 'Accept Only Neccessary' });
@@ -61,7 +52,6 @@ export class BasePage {
   }
 
   async isLoggedIn(): Promise<boolean> {
-    // Check for an element that only exists when authenticated
     return this.page
       .getByRole('button', { name: /log af|log out/i })
       .isVisible({ timeout: 3000 })

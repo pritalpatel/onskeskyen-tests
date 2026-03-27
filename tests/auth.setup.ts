@@ -3,8 +3,6 @@ import * as path from 'path';
 import * as fs from 'fs';
 
 /**
- * auth.setup.ts
- * ─────────────
  * Runs ONCE before the authenticated test projects.
  * Logs in and saves the browser storage state to `.auth/user.json`.
  * All authenticated tests then reuse this state — no repeated logins.
@@ -23,30 +21,25 @@ setup('authenticate', async ({ page }) => {
     );
   }
 
-  // Ensure .auth directory exists
   fs.mkdirSync(path.dirname(AUTH_FILE), { recursive: true });
 
   await page.goto('https://onskeskyen.dk/login');
   // await page.waitForLoadState('networkidle');
 
-  // Dismiss cookie banner if present
   const cookieBtn = page.getByRole('button', { name: 'Accept Only Neccessary' });
   await cookieBtn.click();
 
   await page.getByRole('button', { name: 'Log ind' }).click();
   await page.getByRole('button', { name: 'photo Fortsæt med e-mail' }).click();
 
-  // Fill login form
   await page.getByRole('textbox', { name: 'E-mail' }).fill(email);
   await page.getByTestId('loginPasswordInput').fill(password);
   await page.getByRole('button', { name: 'Log ind' }).click();
 
 
-  // Verify we're now logged in (not on /login anymore)
   await page.getByTestId('navbarUserProfileAvatar').click();
   await expect(page.getByRole('button', { name: /log af|log out/i })).toBeVisible();
 
-  // Persist the authenticated state
   await page.context().storageState({ path: AUTH_FILE });
 
   console.log(`✅ Auth state saved to ${AUTH_FILE}`);

@@ -1,6 +1,4 @@
 /**
- * navigation.spec.ts
- * ───────────────────
  * Cross-cutting navigation, accessibility, and responsive tests.
  * Runs under both desktop and mobile-chrome projects.
  *
@@ -14,13 +12,9 @@
 import { test, expect } from '../fixtures';
 
 test.describe('Navigation and layout', () => {
-
-  // ── Test 5a: Authenticated nav links resolve ─────────────────────────────
-
   test('all top-level nav links navigate without errors', async ({ homePage, page }) => {
     await homePage.open();
 
-    // Collect top-level nav hrefs
     const navLinks = page.locator('nav a, header a');
     const count = await navLinks.count();
 
@@ -34,20 +28,16 @@ test.describe('Navigation and layout', () => {
       await page.goto(`https://onskeskyen.dk${href}`);
       await page.waitForLoadState('networkidle');
 
-      // Should not land on an obvious error page
       const status = await page.evaluate(() => document.title);
       expect(status).not.toMatch(/404|not found/i);
       expect(page.url()).not.toMatch(/error/i);
     }
   });
 
-  // ── Test 5b: 404 page renders gracefully ────────────────────────────────
-
   test('404 page shows user-friendly error and visual snapshot', async ({ page }) => {
     await page.goto('https://onskeskyen.dk/this-page-does-not-exist-xyz-123');
     await page.waitForLoadState('networkidle');
 
-    // Either the URL contains 404 or the page title / body does
     const url   = page.url();
     const title = await page.title();
     const body  = await page.locator('body').textContent();
@@ -69,8 +59,6 @@ test.describe('Navigation and layout', () => {
     // });
   });
 
-  // ── Test 5c: Page has correct meta title structure ───────────────────────
-
   test('pages have descriptive titles', async ({ homePage, wishlistPage }) => {
     await homePage.open();
     const homeTitle = await homePage.getPageTitle();
@@ -82,15 +70,11 @@ test.describe('Navigation and layout', () => {
     expect(dashTitle.length).toBeGreaterThan(3);
   });
 
-  // ── Test 5d: Responsive — mobile viewport renders correctly ─────────────
-
   test('wishlist dashboard is usable on mobile viewport', async ({ wishlistPage, page, homePage }) => {
-    // Force a mobile viewport for this test
     await page.setViewportSize({ width: 375, height: 812 });
     await homePage.open();
     await wishlistPage.open();
 
-    // The page should still show content / CTAs — not be broken
     const bodyText = await page.locator('body').textContent();
     expect(bodyText?.length).toBeGreaterThan(10);
 

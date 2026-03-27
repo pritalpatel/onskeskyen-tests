@@ -5,12 +5,6 @@ import { SignupPage } from '../pages/SignupPage';
 import { WishlistPage } from '../pages/WishlistPage';
 import { ProfilePage } from '../pages/ProfilePage';
 
-/**
- * Extended test fixtures — inject Page Object instances into every test.
- *
- * Usage in tests:
- *   test('...', async ({ homePage, wishlistPage }) => { ... })
- */
 type PageFixtures = {
   homePage: HomePage;
   loginPage: LoginPage;

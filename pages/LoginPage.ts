@@ -5,7 +5,6 @@ import { BasePage } from './BasePage';
  * LoginPage — handles the sign-in form at /login (or equivalent).
  */
 export class LoginPage extends BasePage {
-  // ── Locators ───────────────────────────────────────────────────────────────
   readonly emailInput: Locator;
   readonly passwordInput: Locator;
   readonly submitButton: Locator;
@@ -23,8 +22,6 @@ export class LoginPage extends BasePage {
     this.forgotPasswordLink = page.locator('a:has-text("Glemt"), a:has-text("Forgot")').first();
     this.signupLink = page.locator('a:has-text("Opret"), a:has-text("Tilmeld"), a[href*="signup"]').first();
   }
-
-  // ── Actions ────────────────────────────────────────────────────────────────
 
   async open() {
     await this.goto('/login');
@@ -46,7 +43,6 @@ export class LoginPage extends BasePage {
   }
 
   async expectLoginSuccess() {
-    // After login, URL should no longer be /login
     await expect(this.page).not.toHaveURL(/\/login/);
   }
 }

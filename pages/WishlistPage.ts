@@ -6,7 +6,6 @@ import { BasePage } from './BasePage';
  * This is the core feature of onskeskyen.dk.
  */
 export class WishlistPage extends BasePage {
-  // ── Locators ───────────────────────────────────────────────────────────────
   readonly createWishlistButton: Locator;
   readonly wishlistNameInput: Locator;
   readonly wishlistDescriptionInput: Locator;
@@ -28,7 +27,6 @@ export class WishlistPage extends BasePage {
   constructor(page: Page) {
     super(page);
 
-    // Wishlist management
     this.createWishlistButton = page.getByTestId('new-wish-btn');
     this.wishlistNameInput = page.getByRole('textbox', { name: 'Indsæt produktlink' });
     this.wishlistDescriptionInput = page.locator('textarea[name="description"], input[name="description"]').first();
@@ -36,7 +34,6 @@ export class WishlistPage extends BasePage {
     this.wishlistCards = page.locator('[data-testid="wishlist-card"], .wishlist-card, .wishlist-item');
     this.firstWishlistCard = this.wishlistCards.first();
 
-    // Wish item management
     this.addWishButton = page.locator('button:has-text("Tilføj ønske"), button:has-text("Nyt ønske"), [data-testid="add-wish"]').first();
     this.wishTitleInput = page.locator('input[name="title"], input[placeholder*="titel"], input[placeholder*="ønske"]').first();
     this.wishUrlInput = page.locator('input[name="url"], input[type="url"], input[placeholder*="link"], input[placeholder*="URL"]').first();
@@ -44,15 +41,12 @@ export class WishlistPage extends BasePage {
     this.saveWishButton = page.locator('button[type="submit"]:has-text("Gem"), button:has-text("Tilføj"), button:has-text("Gem ønske")').first();
     this.wishItems = page.locator('[data-testid="wish-item"], .wish-item, .wish-card');
 
-    // Other actions
     this.deleteWishlistButton = page.locator('button:has-text("Slet"), [data-testid="delete-wishlist"]').first();
     this.confirmDeleteButton = page.locator('button:has-text("Bekræft"), button:has-text("Ja, slet"), [data-testid="confirm-delete"]').first();
     this.shareButton = page.locator('button:has-text("Del"), [data-testid="share"]').first();
     this.shareLink = page.locator('[data-testid="share-link"], input[readonly]').first();
     this.emptyState = page.locator('[data-testid="empty-state"], .empty-state, :has-text("Ingen ønskelister")').first();
   }
-
-  // ── Actions ────────────────────────────────────────────────────────────────
 
   async open() {
    await this.page.getByText('Min ønskeliste').click();

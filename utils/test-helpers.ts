@@ -1,12 +1,8 @@
 import { Page } from '@playwright/test';
 
 /**
- * test-helpers.ts
- * ────────────────
  * Shared utility functions used across multiple test files.
  */
-
-// ── Random data generators ─────────────────────────────────────────────────
 
 export function randomEmail(prefix = 'test'): string {
   return `${prefix}+${Date.now()}@mailinator.com`;
@@ -22,20 +18,10 @@ export function randomWishlistName(): string {
   return `${themes[Math.floor(Math.random() * themes.length)]} ${Date.now()}`;
 }
 
-// ── Page helpers ───────────────────────────────────────────────────────────
-
-/**
- * Wait for network to be quiet (no requests for 500ms).
- * More reliable than waitForLoadState('networkidle') on SPAs.
- */
 export async function waitForNetworkIdle(page: Page, timeout = 10000): Promise<void> {
   await page.waitForLoadState('networkidle', { timeout });
 }
 
-/**
- * Dismiss cookie consent banner if present.
- * Safe to call even if there is no banner.
- */
 export async function dismissCookieBanner(page: Page): Promise<void> {
   const selectors = [
     'button:has-text("Accepter alle")',
@@ -55,10 +41,6 @@ export async function dismissCookieBanner(page: Page): Promise<void> {
   }
 }
 
-/**
- * Mask dynamic content (timestamps, IDs) to reduce visual diff noise.
- * Call before taking a screenshot snapshot.
- */
 export async function maskDynamicContent(page: Page): Promise<void> {
   await page.evaluate(() => {
     const selectors = ['time', '.timestamp', '.date', '[data-testid="created-at"]', '.ago'];
@@ -70,10 +52,6 @@ export async function maskDynamicContent(page: Page): Promise<void> {
   });
 }
 
-/**
- * Scroll to the bottom and back to top to trigger lazy-loaded images,
- * ensuring screenshots are complete.
- */
 export async function triggerLazyLoad(page: Page): Promise<void> {
   await page.evaluate(async () => {
     await new Promise<void>(resolve => {
@@ -93,11 +71,6 @@ export async function triggerLazyLoad(page: Page): Promise<void> {
   await page.waitForTimeout(300);
 }
 
-// ── Assertion helpers ──────────────────────────────────────────────────────
-
-/**
- * Returns true if the element exists in the DOM (even if hidden).
- */
 export async function elementExists(page: Page, selector: string): Promise<boolean> {
   return (await page.locator(selector).count()) > 0;
 }

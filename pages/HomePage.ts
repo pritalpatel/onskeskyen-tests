@@ -6,7 +6,6 @@ import { BasePage } from './BasePage';
  * Covers the marketing/hero section and primary CTAs.
  */
 export class HomePage extends BasePage {
-  // ── Locators ───────────────────────────────────────────────────────────────
   readonly heroHeading: Locator;
   readonly ctaCreateWishlist: Locator;
   readonly ctaLogin: Locator;
@@ -26,8 +25,6 @@ export class HomePage extends BasePage {
     this.ctaLogin = page.locator('a:has-text("Log ind"), button:has-text("Log ind")').first();
     this.searchInput = page.locator('input[type="search"], input[placeholder*="søg"], [data-testid="search"]').first();
   }
-
-  // ── Actions ────────────────────────────────────────────────────────────────
 
   async open() {
     await this.goto('/');

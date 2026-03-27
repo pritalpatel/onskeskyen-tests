@@ -5,7 +5,6 @@ import { BasePage } from './BasePage';
  * SignupPage — handles new account registration.
  */
 export class SignupPage extends BasePage {
-  // ── Locators ───────────────────────────────────────────────────────────────
   readonly nameInput: Locator;
   readonly lastnameInput: Locator;
   readonly emailInput: Locator;
@@ -30,8 +29,6 @@ export class SignupPage extends BasePage {
     this.termsCheckbox = page.locator('input[type="checkbox"][name*="terms"], input[type="checkbox"][name*="accept"]').first();
   }
 
-  // ── Actions ────────────────────────────────────────────────────────────────
-
   async open() {
     await this.goto('/')
     await this.dismissCookieBanner();
@@ -47,6 +44,7 @@ export class SignupPage extends BasePage {
       await this.nameInput.fill(name);
     }
 
+    // Temporary disabled due to false positive faliure
     // if (await this.lastnameInput.isVisible({ timeout: 2000 }).catch(() => false)) {
     //   await this.lastnameInput.fill(name);
     // }
