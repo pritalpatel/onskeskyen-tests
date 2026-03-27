@@ -32,7 +32,7 @@ export class WishlistPage extends BasePage {
     this.createWishlistButton = page.getByTestId('new-wish-btn');
     this.wishlistNameInput = page.getByRole('textbox', { name: 'Indsæt produktlink' });
     this.wishlistDescriptionInput = page.locator('textarea[name="description"], input[name="description"]').first();
-    this.saveWishlistButton = page.locator('button[type="submit"]:has-text("Gem"), button:has-text("Opret"), button:has-text("Gem ønskeliste")').first();
+    this.saveWishlistButton = page.getByTestId('select-wishlist-list-item-0');
     this.wishlistCards = page.locator('[data-testid="wishlist-card"], .wishlist-card, .wishlist-item');
     this.firstWishlistCard = this.wishlistCards.first();
 
@@ -55,12 +55,13 @@ export class WishlistPage extends BasePage {
   // ── Actions ────────────────────────────────────────────────────────────────
 
   async open() {
-    await this.page.getByText('Min ønskeliste').click();
+   await this.page.getByText('Min ønskeliste').click();
     await this.dismissCookieBanner();
   }
 
   async createWishlist(name: string, description?: string) {
     await this.createWishlistButton.click();
+    
     await this.wishlistNameInput.fill(name);
     if (description) {
       if (await this.wishlistDescriptionInput.isVisible({ timeout: 2000 }).catch(() => false)) {
@@ -68,7 +69,7 @@ export class WishlistPage extends BasePage {
       }
     }
     await this.saveWishlistButton.click();
-    await this.waitForPageLoad();
+    await this.waitForPageLoad(); 
   }
 
   async addWishItem(title: string, url?: string, price?: string) {

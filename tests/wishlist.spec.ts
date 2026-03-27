@@ -15,7 +15,7 @@ import { test, expect } from '../fixtures';
 
 const WISHLIST_NAME = `Playwright Test List ${Date.now()}`;
 const WISH_TITLE   = 'Playwright - Node.js Web Automation';
-const WISH_URL     = 'https://example.com/playwright-book';
+const WISH_URL     = 'https://onskeskyen.dk/da/product/MbfokbMtq9ehszhW?brandName=imerco&trendingListId=uZ2cIDbQNJeMUZdm&productListPosition=BRAND%2CTRENDING_LISTS&source=TrendingList&sourceId=uZ2cIDbQNJeMUZdm&position=TRENDING_LISTS%2CPRODUCTS&productSource=TrendingList';
 const WISH_PRICE   = '299';
 
 test.describe('Wishlist management', () => {
@@ -28,7 +28,7 @@ test.describe('Wishlist management', () => {
 
     const countBefore = await wishlistPage.getWishlistCount();
 
-    await wishlistPage.createWishlist(WISHLIST_NAME, 'Created by Playwright automation');
+    await wishlistPage.createWishlist(WISH_URL, 'Created by Playwright automation');
 
     // The new wishlist name should be visible
     await wishlistPage.expectWishlistVisible(WISHLIST_NAME);
